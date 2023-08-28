@@ -56,7 +56,7 @@
             ];
 
             # This is VERY ugly
-            nativeBuildInputs = with pkgs; [ nodejs nodePackages.webpack ];
+            nativeBuildInputs = with pkgs; [ nodejs ];
             preBuild = ''
               export HOME=$(mktemp -d)
               make build-cli-frontend build-stack-frontend
