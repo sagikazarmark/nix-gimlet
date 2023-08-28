@@ -73,6 +73,45 @@
               platforms = platforms.unix;
             };
           };
+
+          gimlet-bin = pkgs.stdenv.mkDerivation rec {
+            pname = "gimlet";
+            version = "0.23.4";
+
+            src =
+              let
+                selectSystem = attrs: attrs.${system} or (throw "Unsupported system: ${system}");
+
+                suffix = selectSystem {
+                  x86_64-linux = "linux-x86_64 ";
+                  x86_64-darwin = "darwin-x86_64 ";
+                  aarch64-linux = "linux-arm64";
+                  aarch64-darwin = "darwin-arm64";
+                };
+                sha256 = selectSystem {
+                  x86_64-linux = "sha256-6ysJuvYMpQ1uaZVc+7ZXPjEL6AxUe6oOmAFov5MGZCs=";
+                  x86_64-darwin = "sha256-XiAqdozec7yK/Yt+Xwb89QsVqJrsqp+7cXCpPzg06GM=";
+                  aarch64-linux = "sha256-H5VBpllJzaOiqsITejjWubriJ2Z2Lpouo8IMGkkLat4=";
+                  aarch64-darwin = "sha256-A7LP/FTYxCWqZ7xlLhbjr24OzCTLFjvo7uf6ylm6edw=";
+                };
+              in
+              pkgs.fetchurl {
+                inherit sha256;
+
+                url = "https://github.com/gimlet-io/gimlet/releases/download/cli-v${version}/gimlet-${suffix}";
+              };
+
+            dontUnpack = true;
+            dontCheck = true;
+            dontConfigure = true;
+            dontBuild = true;
+
+            installPhase = ''
+              mkdir -p $out/bin
+              cp $src $out/bin/gimlet
+              chmod +x $out/bin/gimlet
+            '';
+          };
         };
       };
     };

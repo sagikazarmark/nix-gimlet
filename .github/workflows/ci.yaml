@@ -11,7 +11,13 @@ permissions:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        package: [gimlet, gimlet-bin]
 
     steps:
       - name: Checkout repository
@@ -27,4 +33,4 @@ jobs:
         uses: DeterminateSystems/magic-nix-cache-action@8a218f9e264e9c3803c9a1ee1c30d8e4ab55be63 # v2
 
       - name: Build
-        run: nix build .#gimlet
+        run: nix build .#${{ matrix.package }}
